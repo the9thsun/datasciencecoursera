@@ -1,0 +1,40 @@
+## Coursera Openning and cleanning data project
+library(dplyr)
+library(tidyr)
+
+# 1. Merges the training and the test sets to create one data set. 
+file_path <- "~/Documents/Coursera/data/UCI HAR Dataset"
+setwd(file_path)
+
+# Import feature names and test if name unique 
+features <- read.table("features.txt", header = FALSE)
+activity_labels <- read.table("activity_labels.txt", header = FALSE)
+
+test_path <-  paste(file_path,"/test", sep = "")
+setwd(test_path)
+X_test <- read.table("X_test.txt", header = FALSE)
+Y_test <- read.table("Y_test.txt", header = FALSE)
+subject_test <- read.table("subject_test.txt", header = FALSE)
+
+train_path <- paste(file_path,"/train", sep = "")
+setwd(train_path)
+X_train <- read.table("X_train.txt", header = FALSE)
+Y_train <- read.table("Y_train.txt", header = FALSE)
+subject_train <- read.table("subject_train.txt", header = FALSE)
+
+X_all <- rbind(X_test,X_train)
+Y_all <- rbind(Y_test, Y_train)
+activity_all <- merge(Y_all, activity_labels)
+subject_all <- rbind(subject_test, subject_train)
+
+data_all <- cbind(activity_all[,2],subject_all,X_all)
+variable_names <- c("activity","subject",make.names(features[,2]))
+colnames(data_all) <- variable_names
+mean_data <- matchcols(data_all, with=c("mean"), without=c("meanFreq"))
+st_data <- matchcols(data_all, with=c("std"))
+data <- cbind(data_all[,1:2],data_all[,mean_data],data[,st_data])
+data_sorted <- arrange(data, activity, subject)
+        
+setwd(file_path)
+write.table(data_sorted, file = "submission.txt",row.names = FALSE)
+
