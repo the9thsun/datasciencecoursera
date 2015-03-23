@@ -1,8 +1,5 @@
 ## Coursera Gettsing and cleanning data project
 library(dplyr)
-#library(tidyr)
-
-# 1. Merges the training and the test sets to create one data set. 
 file_path <- "~/Documents/Coursera/data/UCI HAR Dataset"
 setwd(file_path)
 
@@ -45,13 +42,9 @@ data_train$activity <- Labels_train[,2]
 data_train$status <- "train"
 data_train <- data_train[!duplicated(lapply(data_train, summary))]
 
-
 data_all <- bind_rows(data_test, data_train)
-
 data_all_sorted <- arrange(data_all, activity, subject)
 
 View(data_all_sorted)
-
-
 write.table(data_all_sorted, file = "cleandata.txt",row.names = FALSE) 
 
